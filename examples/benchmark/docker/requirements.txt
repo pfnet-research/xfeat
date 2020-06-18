@@ -1,0 +1,9 @@
+PyYAML
+ml_metrics
+optuna>=1.3.0
+lightgbm
+scikit-learn
+pyarrow
+matplotlib
+seaborn
+pandas

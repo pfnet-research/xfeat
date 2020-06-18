@@ -1,0 +1,1 @@
+from xfeat.generic_encoder._lambda_encoder import LambdaEncoder
