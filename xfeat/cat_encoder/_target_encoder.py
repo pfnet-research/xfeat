@@ -138,13 +138,20 @@ class TargetEncoder(TransformerMixin):
         Returns:
             XDataFrame : Output data frame.
         """
-        # TODO(smly): check fit.
+        out_df = input_df.copy()
+
         for col in self._input_cols:
             out_col = self._output_prefix + col + self._output_suffix
-            target_encoder = self._target_encoders[col]
-            input_df[out_col] = target_encoder.transform(input_df[col])
+            if isinstance(input_df[col], pd.Series):
+                X = column_or_1d(input_df[col], warn=True)
+            elif cudf and isinstance(input_df[col], cudf.Series):
+                X = input_df[col]
+            else:
+                raise TypeError
 
-        return input_df
+            out_df[out_col] = self._target_encoders[col].transform(X)
+
+        return out_df
 
     def fit_transform(self, input_df: XDataFrame) -> XDataFrame:
         """Fit to data frame, then transform it.
@@ -238,7 +245,12 @@ class _TargetEncoder(BaseEstimator, SKTransformerMixin):
         # Encoding for testing part. Different result from `fit_transform()`
         # result.
         if cudf_is_available() and isinstance(X, cudf.Series):
-            assert False
+            n_splits = self.fold.get_n_splits()
+            likelihood_values = cupy.zeros((X.shape[0], n_splits))
+            for fold_idx, mean_encoder in enumerate(self.mean_encoders_):
+                ret = mean_encoder.transform(X)
+                likelihood_values[:, fold_idx] = ret
+            return np.mean(likelihood_values, axis=1)
         else:
             n_splits = self.fold.get_n_splits()
             likelihood_values = np.zeros((X.shape[0], n_splits))
