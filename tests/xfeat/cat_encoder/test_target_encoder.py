@@ -72,16 +72,21 @@ def dataframes_targetencoder():
             "target": [1, 1, 0, 1, 1, 1, 0],
         }
     )
+    df_test = pd.DataFrame({
+        "col1": [2, 8],
+        "col2": [2, 8],
+    })
 
     if cudf_is_available():
         df_cuda = cudf.from_pandas(df)
-        return [df, df_cuda]
+        df_test_cuda = cudf.from_pandas(df_test)
+        return [(df, df_test), (df_cuda, df_test_cuda)]
     else:
-        return [df]
+        return [(df, df_test)]
 
 
 def test_target_encoder(dataframes_targetencoder):
-    for df in dataframes_targetencoder:
+    for df, df_test in dataframes_targetencoder:
         fold = KFold(n_splits=2, shuffle=False)
         encoder = TargetEncoder(input_cols=["col1", "col2"], fold=fold)
         df_encoded = encoder.fit_transform(df)
@@ -96,6 +101,34 @@ def test_target_encoder(dataframes_targetencoder):
             "col1_te",
             "col2_te",
         ]
+        assert df.columns.tolist() == [
+            "col1",
+            "col2",
+            "target",
+        ]
+
+        df_test_encoded = encoder.transform(df_test)
+
+        assert np.allclose(
+            df_test_encoded["col1_te"].values,
+            np.array([0.333333, 0.833333])
+        )
+        assert np.allclose(
+            df_test_encoded["col2_te"].values,
+            np.array([0.5, 0.5])
+        )
+        assert df_test_encoded.columns.tolist() == [
+            "col1",
+            "col2",
+            "col1_te",
+            "col2_te",
+        ]
+        assert df_test.columns.tolist() == [
+            "col1",
+            "col2",
+        ]
+        print(df_test_encoded)
+        print(df_test)
 
 
 def test_internal_target_encoder():
