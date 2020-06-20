@@ -127,8 +127,6 @@ def test_target_encoder(dataframes_targetencoder):
             "col1",
             "col2",
         ]
-        print(df_test_encoded)
-        print(df_test)
 
 
 def test_internal_target_encoder():

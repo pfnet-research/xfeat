@@ -149,7 +149,6 @@ class TargetEncoder(TransformerMixin):
             else:
                 raise TypeError
 
-            print(type(input_df[col]))
             out_df[out_col] = self._target_encoders[col].transform(X)
 
         return out_df
