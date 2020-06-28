@@ -21,7 +21,7 @@ All experiments run on a single Linux server (AWS p3.2xlarge) with the following
 * OS: Ubuntu 18.04
 * Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz
 * GPU: NVIDIA Tesla V100 x1
-* Docker image: `smly/xfeat-cudf` ([Dockerifle](../examples/benchmark/docker/Dockerfile))
+* Docker image: `smly/xfeat-cudf` ([Dockerfile](../examples/benchmark/docker/Dockerfile))
 
 ## Results
 

@@ -52,7 +52,7 @@ It generates a group from the `group_key` column and aggregates the numerical va
 
 ### Data Compaction
 
-`compress_df` reduces a DataFrame's memory footprint by converting the data types. Since Feather File Format does not support `float8`, float vlaues will be converted to `float16` at a minimum.
+`compress_df` reduces a DataFrame's memory footprint by converting the data types. Since Feather File Format does not support `float8`, float values will be converted to `float16` at a minimum.
 
 ```python
 from xfeat.utils import compress_df
