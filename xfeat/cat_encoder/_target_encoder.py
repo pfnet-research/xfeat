@@ -398,6 +398,7 @@ class _CuPy_MeanEncoder(BaseEstimator):
         """
         # Label encoding if necessary
         if not cupy.can_cast(X.dtype, cupy.int):
+            X = X.to_array()
             X, uniques = pd.Series(cupy.asnumpy(X)).factorize()
             X = cudf.Series(X)
             self._label_encoding_uniques = uniques

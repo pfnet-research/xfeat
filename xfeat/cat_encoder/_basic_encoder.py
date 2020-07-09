@@ -7,7 +7,7 @@ import pandas as pd
 from xfeat.utils import analyze_columns
 from xfeat.base import TransformerMixin
 from xfeat.types import XDataFrame
-
+import cudf
 
 class LabelEncoder(TransformerMixin):
     """Encode labels with numerical values between `0` and `n_unique - 1`.
@@ -124,8 +124,11 @@ class LabelEncoder(TransformerMixin):
 
         for col in input_cols:
             out_col = self._output_prefix + col + self._output_suffix
-            X = self._uniques[col].get_indexer(new_df[col])
-
+            if isinstance(new_df, pd.DataFrame):
+                X = self._uniques[col].get_indexer(new_df[col])
+            elif isinstance(new_df, cudf.DataFrame):
+                X = self._uniques[col].get_indexer(new_df[col].to_array())
+            
             if self._unseen == "n_unique":
                 missing_values = new_df[col].isna()
                 unseen_values = np.invert(new_df[col].isin(self._uniques[col]))
