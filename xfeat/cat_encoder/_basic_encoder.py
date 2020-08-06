@@ -9,6 +9,12 @@ from xfeat.base import TransformerMixin
 from xfeat.types import XDataFrame
 
 
+try:
+    import cudf  # NOQA
+except ImportError:
+    cudf = None
+
+
 class LabelEncoder(TransformerMixin):
     """Encode labels with numerical values between `0` and `n_unique - 1`.
 
