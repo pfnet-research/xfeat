@@ -5,7 +5,7 @@ import pandas as pd
 
 from xfeat.base import TransformerMixin
 from xfeat.pipeline import Pipeline
-from xfeat.utils import cudf_is_available
+from xfeat.utils import cudf_is_available, allclose
 from xfeat.types import XDataFrame
 
 
@@ -41,5 +41,5 @@ def test_pipeline(dataframes):
         pipeline = Pipeline([DummyTransformer1(), DummyTransformer2()])
         df = pipeline.transform(df)
         assert df.columns.tolist() == ["var1", "new1", "new2"]
-        assert np.allclose(df["new1"].values, np.array([1, 1, 1]))
-        assert np.allclose(df["new2"].values, np.array([2, 2, 2]))
+        assert allclose(df["new1"], np.array([1, 1, 1]))
+        assert allclose(df["new2"], np.array([2, 2, 2]))

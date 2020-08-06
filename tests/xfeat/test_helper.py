@@ -3,7 +3,7 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from xfeat.utils import cudf_is_available
+from xfeat.utils import cudf_is_available, allclose
 from xfeat.helper import aggregation
 
 
@@ -36,9 +36,9 @@ def test_aggregation(dataframes):
         assert new_cols == ["agg_max_a_grpby_b", "agg_max_c_grpby_b"]
         assert "agg_max_a_grpby_b" in new_df.columns
         assert "agg_max_c_grpby_b" in new_df.columns
-        assert np.allclose(
-            new_df["agg_max_a_grpby_b"].values, np.array([3, 3, 3, 5, 5])
+        assert allclose(
+            new_df["agg_max_a_grpby_b"], np.array([3, 3, 3, 5, 5])
         )
-        assert np.allclose(
-            new_df["agg_max_c_grpby_b"].values, np.array([1, 1, 1, 1, 1])
+        assert allclose(
+            new_df["agg_max_c_grpby_b"], np.array([1, 1, 1, 1, 1])
         )

@@ -16,13 +16,20 @@ from xfeat.utils import cudf_is_available
 try:
     import cudf  # NOQA
     import cupy  # NOQA
+    CupyArray = cupy.array
 except ImportError:
     cudf = None
     cupy = None
+    CupyArray = None
 
 
-def _get_index(arr, val):
+def _get_index(arr: np.ndarray, val: np.ndarray):
     index = np.searchsorted(arr, val)
+    return index
+
+
+def _get_index_cupy(arr: CupyArray, val: CupyArray):
+    index = cupy.searchsorted(arr, val)
     return index
 
 
@@ -352,7 +359,6 @@ class _MeanEncoder(BaseEstimator, SKTransformerMixin):
 
         X = X.copy()
         X[unseen_mask] = np.max(self.classes_)
-
         indices = _get_index(self.classes_, X[encode_mask])
 
         _classes_index_list = np.searchsorted(self.lut_[:, 0], self.classes_)
@@ -455,7 +461,7 @@ class _CuPy_MeanEncoder(BaseEstimator):
         X = X.copy()
         X[unseen_mask] = cupy.max(self.classes_)
 
-        indices = _get_index(self.classes_, X[encode_mask])
+        indices = _get_index_cupy(self.classes_, X[encode_mask])
 
         _classes_index_list = cupy.searchsorted(self.lut_[:, 0], self.classes_)
         encoded_values = cupy.zeros(X.shape[0], dtype=cupy.float32)
