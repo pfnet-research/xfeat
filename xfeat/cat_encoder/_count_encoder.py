@@ -3,13 +3,19 @@ from typing import List, Dict, Optional
 
 import numpy as np
 import pandas as pd
+
 from sklearn.base import BaseEstimator
 from sklearn.base import TransformerMixin as SKTransformerMixin
 from sklearn.utils.validation import column_or_1d, check_is_fitted
 
 from xfeat.types import XDataFrame
 from xfeat.base import TransformerMixin
+from xfeat.utils import cudf_is_available
 
+try:
+    import cudf  # NOQA
+except ImportError:
+    cudf = None
 
 class CountEncoder(TransformerMixin):
     """Encode frequency of categorical values.
@@ -128,6 +134,8 @@ class _CountEncoder(BaseEstimator, SKTransformerMixin):
 
     def fit(self, X, y=None):
         """Fit to ndarray, then transform it."""
+        if cudf_is_available() and isinstance(X, cudf.Series):
+            X = X.to_array()
         X = column_or_1d(X, warn=True)
 
         # Label encoding if necessary
@@ -147,6 +155,8 @@ class _CountEncoder(BaseEstimator, SKTransformerMixin):
     def transform(self, X):
         """Transform ndarray values."""
         check_is_fitted(self, "classes_")
+        if cudf_is_available() and isinstance(X, cudf.Series):
+            X = X.to_array()
         X = column_or_1d(X, warn=True)
 
         # Label encoding if necessary
