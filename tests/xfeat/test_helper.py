@@ -16,7 +16,7 @@ except ImportError:
 @pytest.fixture
 def dataframes():
     df = pd.DataFrame(
-        {"a": [1, 2, 3, 4, 5],"b": ["a", "a", "a", "b", "b"], "c": [0, 0, 1, 1, 1],}
+        {"a": [1, 2, 3, 4, 5], "b": ["a", "a", "a", "b", "b"], "c": [0, 0, 1, 1, 1],}
     )
 
     if cudf_is_available():
