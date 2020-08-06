@@ -4,23 +4,13 @@ import numpy as np
 import pandas as pd
 
 from xfeat.generic_encoder import LambdaEncoder
-from xfeat.types import XSeries
-from xfeat.utils import cudf_is_available
+from xfeat.utils import cudf_is_available, allclose
 
 
 try:
     import cudf  # NOQA
-    import cupy as cp  # NOQA
 except ImportError:
     cudf = None
-    cp = None
-
-
-def _allclose(lhs: XSeries, rhs: np.ndarray):
-    if cudf_is_available():
-        return np.allclose(cp.asnumpy(lhs.values), rhs)
-    else:
-        return np.allclose(lhs.values, rhs)
 
 
 @pytest.fixture
@@ -45,4 +35,4 @@ def test_lambda_encoder(dataframes):
         )
         print(np.array([2, 3, 4]))
         assert df_encoded.columns.tolist() == ["col1", "col1_lmd"]
-        assert _allclose(df_encoded["col1_lmd"], np.array([2, 3, 4]))
+        assert allclose(df_encoded["col1_lmd"], np.array([2, 3, 4]))

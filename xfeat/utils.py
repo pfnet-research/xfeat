@@ -4,7 +4,7 @@ from logging import getLogger
 import pandas as pd
 import numpy as np
 
-from xfeat.types import XDataFrame
+from xfeat.types import XDataFrame, XSeries
 
 
 logger = getLogger(__name__)
@@ -12,8 +12,10 @@ logger = getLogger(__name__)
 
 try:
     import cudf  # NOQA
+    import cupy as cp  # NOQA
 except ImportError:
     cudf = None
+    cp = None
 
 
 def analyze_columns(input_df: XDataFrame) -> Tuple[List[str], List[str]]:
@@ -122,3 +124,15 @@ def is_cudf(input_df: XDataFrame) -> bool:
         cuDF or not.
     """
     return cudf_is_available() and isinstance(input_df, cudf.DataFrame)
+
+
+def allclose(lhs: XSeries, rhs: np.ndarray):
+    """Returns True if two arrays are element-wise equal within a tolerance.
+
+    Returns:
+        True if two arrays are equal within a tolerance. False otherwise.
+    """
+    if cudf_is_available():
+        return np.allclose(cp.asnumpy(lhs.values), rhs)
+    else:
+        return np.allclose(lhs.values, rhs)

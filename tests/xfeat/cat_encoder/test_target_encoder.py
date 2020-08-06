@@ -9,8 +9,7 @@ from xfeat import TargetEncoder
 from xfeat.cat_encoder._target_encoder import _MeanEncoder
 from xfeat.cat_encoder._target_encoder import _CuPy_MeanEncoder
 from xfeat.cat_encoder._target_encoder import _TargetEncoder
-from xfeat.types import XSeries
-from xfeat.utils import cudf_is_available
+from xfeat.utils import cudf_is_available, allclose
 
 
 try:
@@ -19,13 +18,6 @@ try:
 except ImportError:
     cudf = None
     cupy = None
-
-
-def _allclose(lhs: XSeries, rhs: np.ndarray):
-    if cudf_is_available():
-        return np.allclose(cupy.asnumpy(lhs.values), rhs)
-    else:
-        return np.allclose(lhs.values, rhs)
 
 
 @pytest.fixture
@@ -54,7 +46,7 @@ def test_target_encoder_with_categorical_values(dataframes):
         assert encoder.fold.get_n_splits() == 2
         assert list(sorted(encoder._target_encoders.keys())) == ["col1", "col2"]
 
-        assert _allclose(
+        assert allclose(
             df_encoded["col1_te"],
             np.array([0.0, 0.0, 0.0, 0.66666667, 1.0, 1.0, 1.0,]),
         )
@@ -99,7 +91,7 @@ def test_target_encoder(dataframes_targetencoder):
         fold = KFold(n_splits=2, shuffle=False)
         encoder = TargetEncoder(input_cols=["col1", "col2"], fold=fold)
         df_encoded = encoder.fit_transform(df)
-        assert _allclose(
+        assert allclose(
             df_encoded["col1_te"],
             np.array([0.0, 0.0, 0.0, 0.66666667, 1.0, 1.0, 1.0,])
         )
@@ -118,11 +110,11 @@ def test_target_encoder(dataframes_targetencoder):
 
         df_test_encoded = encoder.transform(df_test)
 
-        assert _allclose(
+        assert allclose(
             df_test_encoded["col1_te"],
             np.array([0.333333, 0.833333])
         )
-        assert _allclose(
+        assert allclose(
             df_test_encoded["col2_te"],
             np.array([0.5, 0.5])
         )
