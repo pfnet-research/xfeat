@@ -38,4 +38,7 @@ def test_arithmetic_combinations(dataframes):
             "col1col3_plus",
             "col2col3_plus",
         ]
-        assert df_new["col2col3_plus"].tolist() == [5, 7, 9, 11, 13]
+        if cudf_is_available() and isinstance(df_new, cudf.DataFrame):
+            assert df_new["col2col3_plus"].to_arrow().to_pylist() == [5, 7, 9, 11, 13]
+        else:
+            assert df_new["col2col3_plus"].tolist() == [5, 7, 9, 11, 13]
