@@ -35,7 +35,10 @@ def test_concat_combination(dataframes):
             "col1col3_combi",
             "col2col3_combi",
         ]
-        assert df_encoded["col1col3_combi"].tolist() == ["aX", "bY"]
+        if cudf_is_available() and isinstance(df_encoded, cudf.DataFrame):
+            assert df_encoded["col1col3_combi"].to_arrow().to_pylist() == ["aX", "bY"]
+        else:
+            assert df_encoded["col1col3_combi"].tolist() == ["aX", "bY"]
 
     for df in dataframes:
         encoder = ConcatCombination(output_suffix="", drop_origin=True)
@@ -45,12 +48,21 @@ def test_concat_combination(dataframes):
             "col1col3",
             "col2col3",
         ]
-        assert df_encoded["col2col3"].tolist() == ["@X", "%Y"]
+        if cudf_is_available() and isinstance(df_encoded, cudf.DataFrame):
+            assert df_encoded["col2col3"].to_arrow().to_pylist() == ["@X", "%Y"]
+        else:
+            assert df_encoded["col2col3"].tolist() == ["@X", "%Y"]
 
     for df in dataframes:
         encoder = ConcatCombination(output_suffix="", drop_origin=True, r=3)
         df_encoded = encoder.fit_transform(df)
-        assert df_encoded.columns.tolist() == [
-            "col1col2col3",
-        ]
-        assert df_encoded["col1col2col3"].tolist() == ["a@X", "b%Y"]
+        if cudf_is_available() and isinstance(df_encoded, cudf.DataFrame):
+            assert df_encoded.columns.tolist() == [
+                "col1col2col3",
+            ]
+            assert df_encoded["col1col2col3"].to_arrow().to_pylist() == ["a@X", "b%Y"]
+        else:
+            assert df_encoded.columns.tolist() == [
+                "col1col2col3",
+            ]
+            assert df_encoded["col1col2col3"].tolist() == ["a@X", "b%Y"]
