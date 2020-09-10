@@ -23,7 +23,7 @@ def get_tests_require() -> List[str]:
 
 setup(
     name="xfeat",
-    version="0.1.0",
+    version="0.1.1",
     description="Feature Engineering & Exploration Library using GPUs and Optuna",
     author="Kohei Ozaki",
     author_email="ozaki@preferred.jp",

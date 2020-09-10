@@ -8,4 +8,4 @@ from xfeat.pipeline import *  # NOQA
 from xfeat.helper import aggregation  # NOQA
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
