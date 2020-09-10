@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Optional
 
 import optuna
 
@@ -22,7 +22,7 @@ class KBestThresholdExplorer(OptunaSelectorMixin):
         kbest_search_range: Union[List[int], str] = "auto",
     ):
         self._selector = selector
-        self._trial = None
+        self._trial = None  # type: Optional[optuna.trial.FrozenTrial]
         self.kbest_search_range = kbest_search_range
 
         self._search_space = {
