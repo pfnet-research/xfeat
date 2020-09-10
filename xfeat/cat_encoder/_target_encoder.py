@@ -28,7 +28,7 @@ def _get_index(arr: np.ndarray, val: np.ndarray):
     return index
 
 
-def _get_index_cupy(arr: CupyArray, val: CupyArray):
+def _get_index_cupy(arr: "cupy.array", val: "cupy.array"):
     index = cupy.searchsorted(arr, val)
     return index
 
