@@ -16,11 +16,9 @@ from xfeat.utils import cudf_is_available
 try:
     import cudf  # NOQA
     import cupy  # NOQA
-    CupyArray = cupy.array
 except ImportError:
     cudf = None
     cupy = None
-    CupyArray = None
 
 
 def _get_index(arr: np.ndarray, val: np.ndarray):
