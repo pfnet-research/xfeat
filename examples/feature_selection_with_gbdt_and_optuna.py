@@ -133,12 +133,12 @@ def evaluate_dataframe(df, y):
     train_set = lgb.Dataset(X_train, label=y_train)
     scores = lgb.cv(params, train_set, num_boost_round=100, stratified=False, seed=1)
     rmsle_score = scores["rmse-mean"][-1]
-    print(f" - CV RMSEL: {rmsle_score:.6f}")
+    print(f" - CV RMSLE: {rmsle_score:.6f}")
 
     booster = lgb.train(params, train_set, num_boost_round=100)
     y_pred = booster.predict(X_test)
     test_rmsle_score = rmse(np.log1p(y_test), y_pred)
-    print(f" - test RMSEL: {test_rmsle_score:.6f}")
+    print(f" - test RMSLE: {test_rmsle_score:.6f}")
 
 
 def rmse(y_true, y_pred):
