@@ -8,7 +8,7 @@ def get_install_requires() -> List[str]:
 
     return [
         "PyYAML",
-        "ml_metrics",
+        # "ml_metrics",
         "optuna>=1.3.0",
         "lightgbm",
         "scikit-learn",

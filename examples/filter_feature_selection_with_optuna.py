@@ -10,10 +10,10 @@ from functools import partial
 
 import optuna
 from sklearn.datasets import load_breast_cancer
+from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
-from ml_metrics import auc
 
 from xfeat.pipeline import Pipeline
 from xfeat.num_encoder import SelectNumerical
@@ -42,7 +42,7 @@ def objective(df, selector, trial):
     model.fit(X_trn, df_trn["target"])
     y_pred = model.predict_proba(X_tst)[:, 1]
 
-    score = auc(df_tst["target"].values, y_pred)
+    score = roc_auc_score(df_tst["target"].values, y_pred)
     return score
 
 
